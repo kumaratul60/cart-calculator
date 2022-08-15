@@ -1,8 +1,13 @@
+import React, { Suspense, lazy, useEffect, useReducer } from "react";
 import axios from "axios";
-import { useEffect, useReducer } from "react";
-import Cart from "./components/Cart";
-import Products from "./components/Products";
 import { cartReducer } from "./reducer/cartReducer";
+import ErrorBoundary from "./components/ErrorBoundary";
+
+// import Cart from "./components/Cart";
+// import Products from "./components/Products";
+
+const Cart = lazy(() => import("./components/Cart"));
+const Products = lazy(() => import("./components/Products"));
 
 /*
   Why use useReducer hook instead of useState => useReducer is more efficient and scalable than useState, it basically add the logic 
@@ -53,8 +58,12 @@ function App() {
 
   return (
     <div style={{ display: "flex" }}>
-      <Products state={state} dispatch={dispatch} />
-      <Cart state={state} dispatch={dispatch} />
+      <ErrorBoundary>
+        <Suspense fallback={<div> Loading... </div>}>
+          <Products state={state} dispatch={dispatch} />
+          <Cart state={state} dispatch={dispatch} />
+        </Suspense>
+      </ErrorBoundary>
     </div>
   );
 }
